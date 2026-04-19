@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>History - FortisFX</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0a0e1a;
+            color: white;
+        }
+
+        .header {
+            background: rgba(15, 20, 35, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .logo h2 {
+            font-size: 22px;
+            background: linear-gradient(135deg, #ffffff 0%, #00c853 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #9ca3af;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #00c853;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .balance {
+            background: rgba(0, 200, 83, 0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .balance span {
+            color: #00c853;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            text-decoration: none;
+            color: #9ca3af;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            background: rgba(20, 25, 40, 0.6);
+            padding: 8px;
+            border-radius: 16px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: #00c853;
+            color: white;
+        }
+
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            background: rgba(20, 25, 40, 0.8);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .summary-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .summary-value.positive {
+            color: #00c853;
+        }
+
+        .summary-value.negative {
+            color: #ff3b30;
+        }
+
+        /* Table */
+        .table-container {
+            background: rgba(20, 25, 40, 0.8);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: left;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .trade-buy {
+            color: #00c853;
+            font-weight: 600;
+        }
+
+        .trade-sell {
+            color: #ff3b30;
+            font-weight: 600;
+        }
+
+        .status-success {
+            color: #00c853;
+        }
+
+        .status-pending {
+            color: #ff9800;
+        }
+
+        .status-failed {
+            color: #ff3b30;
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            padding: 10px 16px;
+            background: rgba(15, 20, 35, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            width: 250px;
+        }
+
+        .date-filter select {
+            padding: 10px 16px;
+            background: rgba(15, 20, 35, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box input {
+                width: 100%;
+            }
+            
+            th, td {
+                padding: 12px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <h2>FORTISFX</h2>
+        </div>
+        <div class="nav-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="bot-panel.html">Bot Control</a>
+            <a href="deposit.html">Deposit</a>
+            <a href="withdraw.html">Withdraw</a>
+            <a href="history.html" class="active">History</a>
+        </div>
+        <div class="user-info">
+            <div class="balance">Balance: <span>$10,000.00</span></div>
+            <a href="index.html" class="logout-btn">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Summary Cards -->
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-label">Total Trades</div>
+                <div class="summary-value">47</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Win Rate</div>
+                <div class="summary-value positive">68%</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Total Profit/Loss</div>
+                <div class="summary-value positive">+$342.50</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Total Deposited</div>
+                <div class="summary-value">$12,500</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Total Withdrawn</div>
+                <div class="summary-value">$2,842</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="trades">📊 Trade History</button>
+            <button class="tab-btn" data-tab="deposits">💰 Deposit History</button>
+            <button class="tab-btn" data-tab="withdrawals">💸 Withdrawal History</button>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Search by pair or ID...">
+            </div>
+            <div class="date-filter">
+                <select id="dateFilter">
+                    <option value="all">All Time</option>
+                    <option value="today">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Trade History Table -->
+        <div id="tradesTable" class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Pair</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Entry</th>
+                        <th>Exit</th>
+                        <th>P&L</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="tradesBody">
+                    <!-- Filled by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Deposit History Table (Hidden by default) -->
+        <div id="depositsTable" class="table-container" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Currency</th>
+                        <th>Amount</th>
+                        <th>Transaction ID</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="depositsBody">
+                    <!-- Filled by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Withdrawal History Table (Hidden by default) -->
+        <div id="withdrawalsTable" class="table-container" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Currency</th>
+                        <th>Amount</th>
+                        <th>Fee</th>
+                        <th>Address</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="withdrawalsBody">
+                    <!-- Filled by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Mock Data
+        const tradesData = [
+            { date: '2024-01-15 14:32:00', pair: 'EUR/USD', type: 'buy', amount: 1000, entry: 1.09250, exit: 1.09580, pnl: 30.20, status: 'closed' },
+            { date: '2024-01-15 10:15:00', pair: 'GBP/USD', type: 'sell', amount: 500, entry: 1.28430, exit: 1.28210, pnl: 11.00, status: 'closed' },
+            { date: '2024-01-14 16:45:00', pair: 'USD/JPY', type: 'buy', amount: 2000, entry: 148.720, exit: 149.150, pnl: 57.80, status: 'closed' },
+            { date: '2024-01-14 09:20:00', pair: 'EUR/USD', type: 'sell', amount: 1500, entry: 1.09100, exit: 1.09350, pnl: -34.40, status: 'closed' },
+            { date: '2024-01-13 22:10:00', pair: 'AUD/USD', type: 'buy', amount: 800, entry: 0.65890, exit: 0.66120, pnl: 27.90, status: 'closed' },
+            { date: '2024-01-13 13:30:00', pair: 'GBP/USD', type: 'buy', amount: 1200, entry: 1.28300, exit: 1.28650, pnl: 40.90, status: 'closed' },
+            { date: '2024-01-12 11:00:00', pair: 'USD/JPY', type: 'sell', amount: 1000, entry: 148.500, exit: 148.800, pnl: -20.20, status: 'closed' },
+            { date: '2024-01-12 08:15:00', pair: 'EUR/USD', type: 'buy', amount: 2000, entry: 1.09000, exit: 1.09320, pnl: 58.60, status: 'closed' }
+        ];
+
+        const depositsData = [
+            { date: '2024-01-10 09:23:00', currency: 'XRP', amount: 500, txid: '8F7G3H2J9K0L1Q2W3E4R5T6Y7U8I9O0P', status: 'confirmed' },
+            { date: '2024-01-05 14:15:00', currency: 'USDT', amount: 1000, txid: '7E6D2C1I8K9P0O1I2U3Y4T5R6E7W8Q9A', status: 'confirmed' },
+            { date: '2023-12-28 11:45:00', currency: 'BTC', amount: 5000, txid: '6D5C4B3V2B1N0M9K8L7J6H5G4F3D2S1A', status: 'confirmed' },
+            { date: '2023-12-20 16:30:00', currency: 'XRP', amount: 300, txid: '5C4B3A2Z1X0W9V8U7T6S5R4Q3P2O1N0M', status: 'confirmed' }
+        ];
+
+        const withdrawalsData = [
+            { date: '2024-01-08 10:30:00', currency: 'XRP', amount: 500, fee: 10, address: 'rHvCnFhRzRyJmYKqZkYN4JsoM8dQ8ZxHhA', status: 'completed' },
+            { date: '2024-01-02 09:15:00', currency: 'USDT', amount: 200, fee: 4, address: 'TXgKqYhZvN5QpLmR8wJfXcVbN7mKjH3gFdS', status: 'completed' },
+            { date: '2023-12-25 14:20:00', currency: 'BTC', amount: 1000, fee: 20, address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', status: 'completed' },
+            { date: '2023-12-18 11:00:00', currency: 'XRP', amount: 142, fee: 2.84, address: 'rHvCnFhRzRyJmYKqZkYN4JsoM8dQ8ZxHhA', status: 'completed' }
+        ];
+
+        // Current active tab
+        let activeTab = 'trades';
+
+        // Render functions
+        function renderTrades(filter = 'all', search = '') {
+            let filtered = [...tradesData];
+            
+            // Date filter
+            const now = new Date();
+            if (filter === 'today') {
+                filtered = filtered.filter(t => new Date(t.date).toDateString() === now.toDateString());
+            } else if (filter === 'week') {
+                const weekAgo = new Date(now.setDate(now.getDate() - 7));
+                filtered = filtered.filter(t => new Date(t.date) >= weekAgo);
+            } else if (filter === 'month') {
+                const monthAgo = new Date(now.setMonth(now.getMonth() - 1));
+                filtered = filtered.filter(t => new Date(t.date) >= monthAgo);
+            }
+            
+            // Search filter
+            if (search) {
+                filtered = filtered.filter(t => t.pair.toLowerCase().includes(search.toLowerCase()) || t.type.includes(search));
+            }
+            
+            const tbody = document.getElementById('tradesBody');
+            if (!tbody) return;
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;">No trades found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = filtered.map(trade => `
+                <tr>
+                    <td>${trade.date}</td>
+                    <td>${trade.pair}</td>
+                    <td class="${trade.type === 'buy' ? 'trade-buy' : 'trade-sell'}">${trade.type.toUpperCase()}</td>
+                    <td>$${trade.amount}</td>
+                    <td>${trade.entry}</td>
+                    <td>${trade.exit}</td>
+                    <td class="${trade.pnl >= 0 ? 'positive' : 'negative'}">${trade.pnl >= 0 ? '+' : ''}$${trade.pnl}</td>
+                    <td class="status-success">✓ Closed</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderDeposits(filter = 'all', search = '') {
+            let filtered = [...depositsData];
+            
+            if (search) {
+                filtered = filtered.filter(d => d.currency.toLowerCase().includes(search.toLowerCase()) || d.txid.includes(search));
+            }
+            
+            const tbody = document.getElementById('depositsBody');
+            if (!tbody) return;
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">No deposits found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = filtered.map(deposit => `
+                <tr>
+                    <td>${deposit.date}</td>
+                    <td>${deposit.currency}</td>
+                    <td>${deposit.amount} ${deposit.currency}</td>
+                    <td><small>${deposit.txid.substring(0, 20)}...</small></td>
+                    <td class="status-success">✓ ${deposit.status}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderWithdrawals(filter = 'all', search = '') {
+            let filtered = [...withdrawalsData];
+            
+            if (search) {
+                filtered = filtered.filter(w => w.currency.toLowerCase().includes(search.toLowerCase()) || w.address.includes(search));
+            }
+            
+            const tbody = document.getElementById('withdrawalsBody');
+            if (!tbody) return;
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">No withdrawals found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = filtered.map(withdrawal => `
+                <tr>
+                    <td>${withdrawal.date}</td>
+                    <td>${withdrawal.currency}</td>
+                    <td>${withdrawal.amount} ${withdrawal.currency}</td>
+                    <td>$${withdrawal.fee}</td>
+                    <td><small>${withdrawal.address.substring(0, 15)}...</small></td>
+                    <td class="status-success">✓ ${withdrawal.status}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                activeTab = this.getAttribute('data-tab');
+                
+                document.getElementById('tradesTable').style.display = 'none';
+                document.getElementById('depositsTable').style.display = 'none';
+                document.getElementById('withdrawalsTable').style.display = 'none';
+                
+                if (activeTab === 'trades') {
+                    document.getElementById('tradesTable').style.display = 'block';
+                    renderTrades();
+                } else if (activeTab === 'deposits') {
+                    document.getElementById('depositsTable').style.display = 'block';
+                    renderDeposits();
+                } else if (activeTab === 'withdrawals') {
+                    document.getElementById('withdrawalsTable').style.display = 'block';
+                    renderWithdrawals();
+                }
+            });
+        });
+
+        // Filter listeners
+        const searchInput = document.getElementById('searchInput');
+        const dateFilter = document.getElementById('dateFilter');
+        
+        function updateCurrentView() {
+            const search = searchInput ? searchInput.value : '';
+            const filter = dateFilter ? dateFilter.value : 'all';
+            
+            if (activeTab === 'trades') {
+                renderTrades(filter, search);
+            } else if (activeTab === 'deposits') {
+                renderDeposits(filter, search);
+            } else if (activeTab === 'withdrawals') {
+                renderWithdrawals(filter, search);
+            }
+        }
+        
+        if (searchInput) searchInput.addEventListener('input', updateCurrentView);
+        if (dateFilter) dateFilter.addEventListener('change', updateCurrentView);
+        
+        // Initial render
+        renderTrades();
+    </script>
+</body>
+</html>

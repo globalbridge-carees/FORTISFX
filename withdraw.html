@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Withdraw Funds - FortisFX</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0a0e1a;
+            color: white;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(15, 20, 35, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .logo h2 {
+            font-size: 22px;
+            background: linear-gradient(135deg, #ffffff 0%, #00c853 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #9ca3af;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #00c853;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .balance {
+            background: rgba(0, 200, 83, 0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .balance span {
+            color: #00c853;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            text-decoration: none;
+            color: #9ca3af;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* Withdraw Card */
+        .withdraw-card {
+            background: rgba(20, 25, 40, 0.95);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: center;
+        }
+
+        .card-header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .card-header p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        /* Balance Display */
+        .balance-box {
+            background: linear-gradient(135deg, #1a1f2e 0%, #0f1322 100%);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .balance-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .balance-amount {
+            font-size: 36px;
+            font-weight: 700;
+            color: #00c853;
+        }
+
+        /* Currency Selector */
+        .currency-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .currency-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(15, 20, 35, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .currency-btn.active {
+            background: #00c853;
+            border-color: #00c853;
+            color: white;
+        }
+
+        /* Input Fields */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 8px;
+        }
+
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 14px;
+            background: rgba(15, 20, 35, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            font-family: monospace;
+        }
+
+        .input-group input:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: #00c853;
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: rgba(255, 152, 0, 0.1);
+            border: 1px solid rgba(255, 152, 0, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .warning-box .title {
+            color: #ff9800;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .warning-box .text {
+            color: #9ca3af;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* Fee Info */
+        .fee-info {
+            background: rgba(0, 200, 83, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        /* Withdraw Button */
+        .withdraw-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #ff3b30 0%, #cc0000 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .withdraw-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px -5px rgba(255, 59, 48, 0.3);
+        }
+
+        .withdraw-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Recent Withdrawals */
+        .recent-withdrawals {
+            margin-top: 24px;
+            background: rgba(20, 25, 40, 0.6);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .recent-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #9ca3af;
+            margin-bottom: 16px;
+        }
+
+        .withdrawal-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 14px;
+        }
+
+        .withdrawal-status {
+            color: #ff9800;
+        }
+
+        .withdrawal-status.completed {
+            color: #00c853;
+        }
+
+        .withdrawal-status.rejected {
+            color: #ff3b30;
+        }
+
+        /* Mobile */
+        @media (max-width: 480px) {
+            .container {
+                margin: 20px auto;
+            }
+            
+            .balance-amount {
+                font-size: 28px;
+            }
+            
+            .currency-btn {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <h2>FORTISFX</h2>
+        </div>
+        <div class="nav-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="#">Trade</a>
+            <a href="deposit.html">Deposit</a>
+            <a href="withdraw.html" class="active">Withdraw</a>
+            <a href="#">History</a>
+        </div>
+        <div class="user-info">
+            <div class="balance">Balance: <span id="headerBalance">$10,000.00</span></div>
+            <a href="index.html" class="logout-btn">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="withdraw-card">
+            <div class="card-header">
+                <h1>💸 Withdraw Funds</h1>
+                <p>Request a withdrawal to your wallet</p>
+            </div>
+            
+            <div class="card-body">
+                <!-- Balance Display -->
+                <div class="balance-box">
+                    <div class="balance-label">Available Balance</div>
+                    <div class="balance-amount" id="availableBalance">$10,000.00</div>
+                </div>
+
+                <!-- Currency Selector -->
+                <div class="currency-selector">
+                    <div class="currency-btn active" data-currency="xrp">💧 XRP</div>
+                    <div class="currency-btn" data-currency="usdt">🪙 USDT (TRC-20)</div>
+                    <div class="currency-btn" data-currency="btc">₿ Bitcoin</div>
+                </div>
+
+                <!-- Withdrawal Address -->
+                <div class="input-group">
+                    <label>📍 Your Wallet Address</label>
+                    <input type="text" id="withdrawAddress" placeholder="Enter your wallet address" required>
+                </div>
+
+                <!-- XRP Tag (only for XRP) -->
+                <div class="input-group" id="xrpTagGroup" style="display: block;">
+                    <label>🏷️ Your Destination Tag (if required by your wallet)</label>
+                    <input type="text" id="xrpTag" placeholder="Enter destination tag (optional)">
+                </div>
+
+                <!-- Amount -->
+                <div class="input-group">
+                    <label>💰 Withdrawal Amount (USD)</label>
+                    <input type="number" id="withdrawAmount" placeholder="Enter amount" min="10" step="10" required>
+                </div>
+
+                <!-- Fee Info -->
+                <div class="fee-info">
+                    <span>Withdrawal Fee:</span>
+                    <span id="feeAmount">0.5 XRP (~$0.33)</span>
+                </div>
+                <div class="fee-info">
+                    <span>You Will Receive:</span>
+                    <span id="receiveAmount" style="color: #00c853;">0 XRP</span>
+                </div>
+
+                <!-- Warning Box -->
+                <div class="warning-box">
+                    <div class="title">⚠️ IMPORTANT - CHECK BEFORE REQUESTING</div>
+                    <div class="text">
+                        • Double-check your wallet address - crypto transactions are irreversible.<br>
+                        • Minimum withdrawal: $10 USD equivalent.<br>
+                        • Withdrawals are processed within 24-48 hours.<br>
+                        • You will receive an email confirmation when processed.
+                    </div>
+                </div>
+
+                <!-- Withdraw Button -->
+                <button class="withdraw-btn" id="withdrawBtn">Request Withdrawal</button>
+            </div>
+        </div>
+
+        <!-- Recent Withdrawals -->
+        <div class="recent-withdrawals">
+            <div class="recent-title">📋 Recent Withdrawal Requests</div>
+            <div id="recentList">
+                <div class="withdrawal-item">
+                    <span>500 XRP (~$325)</span>
+                    <span>3 days ago</span>
+                    <span class="withdrawal-status completed">✅ Completed</span>
+                </div>
+                <div class="withdrawal-item">
+                    <span>200 XRP (~$130)</span>
+                    <span>1 week ago</span>
+                    <span class="withdrawal-status completed">✅ Completed</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Current balance (would come from backend)
+        let currentBalance = 10000.00;
+        let selectedCurrency = 'xrp';
+        
+        // Exchange rates (simplified)
+        const rates = {
+            xrp: 0.65,    // 1 USD = 1.54 XRP (so 1 XRP = $0.65)
+            usdt: 1.00,   // 1 USDT = $1.00
+            btc: 65000    // 1 BTC = $65,000
+        };
+        
+        // Fees in USD
+        const fees = {
+            xrp: 0.33,    // ~0.5 XRP fee
+            usdt: 1.00,   // $1 USDT fee
+            btc: 5.00     // $5 BTC fee
+        };
+        
+        function updateBalanceDisplay() {
+            document.getElementById('availableBalance').innerText = `$${currentBalance.toFixed(2)}`;
+            document.getElementById('headerBalance').innerText = `$${currentBalance.toFixed(2)}`;
+        }
+        
+        function calculateReceiveAmount() {
+            const amountUSD = parseFloat(document.getElementById('withdrawAmount').value) || 0;
+            const feeUSD = fees[selectedCurrency];
+            const afterFee = Math.max(0, amountUSD - feeUSD);
+            const cryptoAmount = (afterFee / rates[selectedCurrency]).toFixed(4);
+            
+            document.getElementById('receiveAmount').innerHTML = `${cryptoAmount} ${selectedCurrency.toUpperCase()}`;
+            return { cryptoAmount, afterFee };
+        }
+        
+        function updateFeeDisplay() {
+            const feeUSD = fees[selectedCurrency];
+            if (selectedCurrency === 'xrp') {
+                const xrpFee = (feeUSD / rates.xrp).toFixed(2);
+                document.getElementById('feeAmount').innerHTML = `${xrpFee} XRP (~$${feeUSD})`;
+                document.getElementById('xrpTagGroup').style.display = 'block';
+            } else if (selectedCurrency === 'usdt') {
+                document.getElementById('feeAmount').innerHTML = `${feeUSD} USDT (~$${feeUSD})`;
+                document.getElementById('xrpTagGroup').style.display = 'none';
+            } else {
+                const btcFee = (feeUSD / rates.btc).toFixed(6);
+                document.getElementById('feeAmount').innerHTML = `${btcFee} BTC (~$${feeUSD})`;
+                document.getElementById('xrpTagGroup').style.display = 'none';
+            }
+            calculateReceiveAmount();
+        }
+        
+        // Currency selection
+        document.querySelectorAll('.currency-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedCurrency = this.getAttribute('data-currency');
+                updateFeeDisplay();
+            });
+        });
+        
+        // Amount input change
+        document.getElementById('withdrawAmount').addEventListener('input', function() {
+            calculateReceiveAmount();
+        });
+        
+        // Withdraw button
+        document.getElementById('withdrawBtn').addEventListener('click', function() {
+            const address = document.getElementById('withdrawAddress').value.trim();
+            const amountUSD = parseFloat(document.getElementById('withdrawAmount').value);
+            const feeUSD = fees[selectedCurrency];
+            
+            // Validation
+            if (!address) {
+                alert('❌ Please enter your wallet address');
+                return;
+            }
+            
+            if (!amountUSD || amountUSD < 10) {
+                alert('❌ Minimum withdrawal amount is $10 USD');
+                return;
+            }
+            
+            if (amountUSD > currentBalance) {
+                alert('❌ Insufficient balance');
+                return;
+            }
+            
+            if (amountUSD <= feeUSD) {
+                alert(`❌ Amount must be greater than the fee ($${feeUSD})`);
+                return;
+            }
+            
+            const { cryptoAmount, afterFee } = calculateReceiveAmount();
+            
+            // Confirm withdrawal
+            const confirmMsg = `📤 WITHDRAWAL REQUEST\n\n` +
+                `Currency: ${selectedCurrency.toUpperCase()}\n` +
+                `Amount: $${amountUSD}\n` +
+                `Fee: $${feeUSD}\n` +
+                `You Receive: ${cryptoAmount} ${selectedCurrency.toUpperCase()}\n` +
+                `Wallet Address: ${address.substring(0, 20)}...\n\n` +
+                `⚠️ Confirm withdrawal request?`;
+            
+            if (confirm(confirmMsg)) {
+                // Deduct balance
+                currentBalance -= amountUSD;
+                updateBalanceDisplay();
+                
+                // Store withdrawal request
+                const withdrawalRequests = JSON.parse(localStorage.getItem('fortisfx_withdrawals') || '[]');
+                withdrawalRequests.unshift({
+                    id: Date.now(),
+                    currency: selectedCurrency,
+                    amountUSD: amountUSD,
+                    cryptoAmount: cryptoAmount,
+                    address: address,
+                    status: 'pending',
+                    date: new Date().toISOString()
+                });
+                localStorage.setItem('fortisfx_withdrawals', JSON.stringify(withdrawalRequests));
+                
+                alert(`✅ Withdrawal request submitted!\n\nAmount: $${amountUSD}\nTo: ${address.substring(0, 20)}...\n\nWe will process your request within 24-48 hours.`);
+                
+                // Clear form
+                document.getElementById('withdrawAmount').value = '';
+                document.getElementById('withdrawAddress').value = '';
+                document.getElementById('xrpTag').value = '';
+                
+                // Update recent list
+                updateRecentWithdrawals();
+            }
+        });
+        
+        function updateRecentWithdrawals() {
+            const withdrawals = JSON.parse(localStorage.getItem('fortisfx_withdrawals') || '[]');
+            const recentList = document.getElementById('recentList');
+            
+            if (withdrawals.length === 0) {
+                recentList.innerHTML = '<div class="withdrawal-item">No withdrawal requests yet</div>';
+                return;
+            }
+            
+            recentList.innerHTML = withdrawals.slice(0, 5).map(w => {
+                let statusClass = 'withdrawal-status';
+                let statusText = '⏳ Pending';
+                if (w.status === 'completed') {
+                    statusClass += ' completed';
+                    statusText = '✅ Completed';
+                } else if (w.status === 'rejected') {
+                    statusClass += ' rejected';
+                    statusText = '❌ Rejected';
+                }
+                
+                const date = new Date(w.date);
+                const timeAgo = getTimeAgo(date);
+                
+                return `
+                    <div class="withdrawal-item">
+                        <span>${w.cryptoAmount} ${w.currency.toUpperCase()} (~$${w.amountUSD})</span>
+                        <span>${timeAgo}</span>
+                        <span class="${statusClass}">${statusText}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return 'just now';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes} min ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            const days = Math.floor(hours / 24);
+            return `${days} day${days > 1 ? 's' : ''} ago`;
+        }
+        
+        // Initialize
+        updateBalanceDisplay();
+        updateFeeDisplay();
+        updateRecentWithdrawals();
+        
+        // Get user from localStorage
+        try {
+            const userData = localStorage.getItem('fortisfx_user');
+            if (!userData) {
+                // Redirect to login if not logged in (uncomment for production)
+                // window.location.href = 'index.html';
+            }
+        } catch(e) {}
+    </script>
+</body>
+</html>

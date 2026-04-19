@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Unlock Bot - FortisFX</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0a0e1a;
+            color: white;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(15, 20, 35, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .logo h2 {
+            font-size: 22px;
+            background: linear-gradient(135deg, #ffffff 0%, #00c853 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #9ca3af;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #00c853;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .balance {
+            background: rgba(0, 200, 83, 0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .balance span {
+            color: #00c853;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            text-decoration: none;
+            color: #9ca3af;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header Section */
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .pricing-header h1 {
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+
+        .pricing-header p {
+            color: #6b7280;
+            font-size: 18px;
+        }
+
+        .bot-badge {
+            display: inline-block;
+            background: rgba(0, 200, 83, 0.2);
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: #00c853;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        /* Pricing Cards */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .pricing-card {
+            background: rgba(20, 25, 40, 0.8);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0, 200, 83, 0.3);
+        }
+
+        .pricing-card.popular {
+            border: 2px solid #00c853;
+            position: relative;
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #00c853;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 0 20px 0 20px;
+        }
+
+        .card-header {
+            padding: 32px 24px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .plan-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .price {
+            font-size: 48px;
+            font-weight: 800;
+            color: #00c853;
+        }
+
+        .price-period {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: normal;
+        }
+
+        .yearly-price {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 8px;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .feature-list li {
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: #d1d5db;
+        }
+
+        .feature-list li::before {
+            content: "✓";
+            color: #00c853;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .feature-list li.disabled {
+            color: #4b5563;
+        }
+
+        .feature-list li.disabled::before {
+            content: "✗";
+            color: #4b5563;
+        }
+
+        .subscribe-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #00c853 0%, #009624 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .subscribe-btn.outline {
+            background: transparent;
+            border: 1px solid #00c853;
+            color: #00c853;
+        }
+
+        .subscribe-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px -5px rgba(0, 200, 83, 0.3);
+        }
+
+        /* Bot Features Section */
+        .bot-features {
+            background: rgba(20, 25, 40, 0.6);
+            border-radius: 24px;
+            padding: 40px;
+            margin-top: 48px;
+        }
+
+        .bot-features h2 {
+            text-align: center;
+            margin-bottom: 32px;
+            font-size: 28px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+
+        .feature-item h4 {
+            margin-bottom: 8px;
+        }
+
+        .feature-item p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            margin-top: 48px;
+        }
+
+        .faq-section h3 {
+            text-align: center;
+            margin-bottom: 32px;
+            font-size: 24px;
+        }
+
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .faq-item {
+            background: rgba(20, 25, 40, 0.6);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #00c853;
+        }
+
+        .faq-answer {
+            font-size: 14px;
+            color: #9ca3af;
+            line-height: 1.5;
+        }
+
+        /* Current Plan Banner */
+        .current-plan-banner {
+            background: rgba(0, 200, 83, 0.1);
+            border: 1px solid rgba(0, 200, 83, 0.2);
+            border-radius: 16px;
+            padding: 16px 24px;
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        /* Mobile */
+        @media (max-width: 900px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            
+            .pricing-header h1 {
+                font-size: 28px;
+            }
+            
+            .bot-features {
+                padding: 24px;
+            }
+            
+            .current-plan-banner {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <h2>FORTISFX</h2>
+        </div>
+        <div class="nav-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="#">Trade</a>
+            <a href="deposit.html">Deposit</a>
+            <a href="#">Withdraw</a>
+            <a href="#">History</a>
+        </div>
+        <div class="user-info">
+            <div class="balance">Balance: <span>$10,000.00</span></div>
+            <a href="index.html" class="logout-btn">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="pricing-header">
+            <div class="bot-badge">🤖 FORTISFX AUTO TRADING BOT</div>
+            <h1>Unlock Your Trading Bot</h1>
+            <p>Choose the plan that fits your trading style</p>
+        </div>
+
+        <!-- Current Plan Banner (for logged in users) -->
+        <div class="current-plan-banner" id="currentPlanBanner">
+            <div>📊 <strong>Your Current Plan:</strong> <span id="currentPlanText">Free</span></div>
+            <div id="upgradeMessage">🚀 <span style="color: #ff9800;">Upgrade to Premium</span> to unlock the auto trading bot</div>
+        </div>
+
+        <!-- Pricing Cards -->
+        <div class="pricing-grid">
+            <!-- Free Plan -->
+            <div class="pricing-card">
+                <div class="card-header">
+                    <div class="plan-name">Free</div>
+                    <div class="price">$0</div>
+                    <div class="yearly-price">Forever free</div>
+                </div>
+                <div class="card-body">
+                    <ul class="feature-list">
+                        <li>Manual Trading</li>
+                        <li>Basic Charts</li>
+                        <li>Watchlist</li>
+                        <li>5 Open Positions Max</li>
+                        <li class="disabled">🤖 Bot Access</li>
+                        <li class="disabled">Auto Trading</li>
+                        <li class="disabled">AI Signals</li>
+                        <li class="disabled">Priority Support</li>
+                    </ul>
+                    <button class="subscribe-btn outline" disabled>Current Plan</button>
+                </div>
+            </div>
+
+            <!-- Premium Plan (Recommended) -->
+            <div class="pricing-card popular">
+                <div class="popular-badge">🔥 MOST POPULAR</div>
+                <div class="card-header">
+                    <div class="plan-name">Premium</div>
+                    <div class="price">$29</div>
+                    <div class="price-period">/ month</div>
+                    <div class="yearly-price">or $290/year (save 17%)</div>
+                </div>
+                <div class="card-body">
+                    <ul class="feature-list">
+                        <li>Everything in Free</li>
+                        <li>🤖 Full Bot Access</li>
+                        <li>Auto Trading 24/7</li>
+                        <li>3 Active Bots</li>
+                        <li>Technical Indicators</li>
+                        <li>Email Support</li>
+                        <li class="disabled">AI Signals</li>
+                        <li class="disabled">Priority Support</li>
+                    </ul>
+                    <button class="subscribe-btn" data-plan="premium" data-price="29">Subscribe Now</button>
+                </div>
+            </div>
+
+            <!-- Pro Plan -->
+            <div class="pricing-card">
+                <div class="card-header">
+                    <div class="plan-name">Pro</div>
+                    <div class="price">$99</div>
+                    <div class="price-period">/ month</div>
+                    <div class="yearly-price">or $990/year (save 17%)</div>
+                </div>
+                <div class="card-body">
+                    <ul class="feature-list">
+                        <li>Everything in Premium</li>
+                        <li>🤖 Advanced AI Bot</li>
+                        <li>10 Active Bots</li>
+                        <li>AI Trading Signals</li>
+                        <li>Backtesting Engine</li>
+                        <li>API Access</li>
+                        <li>Priority 24/7 Support</li>
+                        <li>Custom Strategies</li>
+                    </ul>
+                    <button class="subscribe-btn" data-plan="pro" data-price="99">Subscribe Now</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bot Features Highlight -->
+        <div class="bot-features">
+            <h2>🤖 What Our Bot Can Do For You</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">📈</div>
+                    <h4>Automated Trading</h4>
+                    <p>Bot trades 24/7 based on your strategy - you don't need to watch charts</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🎯</div>
+                    <h4>Smart Signals</h4>
+                    <p>AI-powered buy/sell signals with high accuracy rate</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">⚡</div>
+                    <h4>Fast Execution</h4>
+                    <p>Sub-second trade execution - never miss an opportunity</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🛡️</div>
+                    <h4>Risk Management</h4>
+                    <p>Auto stop-loss, take-profit, and position sizing</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h3>❓ Frequently Asked Questions</h3>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question">How do I activate the bot after subscribing?</div>
+                    <div class="faq-answer">Once you subscribe, the bot will automatically appear on your dashboard. Just click "Start Bot" and configure your strategy.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Can I cancel anytime?</div>
+                    <div class="faq-answer">Yes! No long-term contracts. Cancel anytime from your settings page.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Is there a free trial?</div>
+                    <div class="faq-answer">Yes! 7-day free trial on all paid plans. No credit card required to start trial.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">What currencies can the bot trade?</div>
+                    <div class="faq-answer">All major forex pairs: EUR/USD, GBP/USD, USD/JPY, AUD/USD, USD/CAD, and more.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check current subscription status (from localStorage for demo)
+        let currentSubscription = localStorage.getItem('fortisfx_subscription') || 'free';
+        
+        function updateUIForSubscription() {
+            const planText = document.getElementById('currentPlanText');
+            const upgradeMsg = document.getElementById('upgradeMessage');
+            
+            if (planText) {
+                if (currentSubscription === 'premium') {
+                    planText.innerText = 'Premium';
+                    upgradeMsg.innerHTML = '✅ <span style="color: #00c853;">Bot Active!</span> Go to dashboard to use your bot';
+                } else if (currentSubscription === 'pro') {
+                    planText.innerText = 'Pro';
+                    upgradeMsg.innerHTML = '✅ <span style="color: #00c853;">Pro Bot Active!</span> Go to dashboard to use advanced features';
+                } else {
+                    planText.innerText = 'Free';
+                    upgradeMsg.innerHTML = '🚀 <span style="color: #ff9800;">Upgrade to Premium</span> to unlock the auto trading bot';
+                }
+            }
+        }
+        
+        updateUIForSubscription();
+        
+        // Subscribe buttons
+        document.querySelectorAll('.subscribe-btn').forEach(btn => {
+            if (btn.disabled) return;
+            
+            btn.addEventListener('click', function() {
+                const plan = this.getAttribute('data-plan');
+                const price = this.getAttribute('data-price');
+                
+                // Show payment modal simulation
+                const confirmMsg = `📋 FORTISFX SUBSCRIPTION\n\nPlan: ${plan.toUpperCase()}\nPrice: $${price}/month\n\nClick OK to proceed to payment.\n\n(Stripe/PayPal integration will be added)`;
+                
+                if (confirm(confirmMsg)) {
+                    // Simulate successful subscription
+                    localStorage.setItem('fortisfx_subscription', plan);
+                    currentSubscription = plan;
+                    updateUIForSubscription();
+                    
+                    alert(`✅ Success! You are now a ${plan.toUpperCase()} member.\n\n🤖 Your bot has been unlocked! Go to dashboard to activate it.`);
+                    
+                    // Update button text
+                    this.innerText = '✓ Active';
+                    this.disabled = true;
+                    
+                    // Redirect to dashboard after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
+                }
+            });
+        });
+        
+        // Get user from localStorage
+        try {
+            const userData = localStorage.getItem('fortisfx_user');
+            if (!userData) {
+                // Redirect to login if not logged in
+                // window.location.href = 'index.html';
+            }
+        } catch(e) {}
+    </script>
+</body>
+</html>
