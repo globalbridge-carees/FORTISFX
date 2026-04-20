@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>FortisFX - Professional Trading Dashboard</title>
     <script src="https://unpkg.com/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.js"></script>
     <style>
@@ -433,6 +433,7 @@
             height: 100%;
         }
 
+        /* PLACE ORDER PANEL STYLES */
         .panel-section { padding: 16px; }
         .panel-title {
             font-size: 14px;
@@ -446,6 +447,7 @@
             align-items: center;
         }
         
+        /* Watchlist Styles */
         .watchlist-actions {
             display: flex;
             gap: 8px;
@@ -542,6 +544,7 @@
         .watchlist-detail { display: flex; gap: 4px; }
         .watchlist-detail span:first-child { color: #6b7280; }
         
+        /* Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -721,245 +724,49 @@
         .overlay.active { display: block; }
 
         /* ============================================================ */
-        /* MOBILE STYLES - ONLY APPLIES ON PHONES */
+        /* MOBILE OPTIMIZED STYLES - PRESERVING ALL FUNCTIONALITY */
         /* ============================================================ */
         @media (max-width: 768px) {
-            /* Make body scrollable */
-            body {
-                overflow-y: auto;
-                overflow-x: hidden;
-                height: auto;
-                min-height: 100vh;
-            }
-            
-            /* Dashboard becomes column layout */
-            .dashboard {
-                flex-direction: column;
-                height: auto;
-                overflow: visible;
-            }
-            
-            /* Hide toolbars on mobile */
-            .left-toolbar, .right-toolbar {
-                display: none;
-            }
-            
-            /* Center panel full width */
-            .center-panel {
-                width: 100%;
-                overflow: visible;
-            }
-            
-            /* Chart area adjustments */
-            .chart-main-area {
-                padding: 0 8px 8px 8px;
-            }
-            
-            .chart-wrapper {
-                min-height: 350px;
-            }
-            
-            .chart-watermark {
-                font-size: 28px;
-                letter-spacing: 4px;
-            }
-            
-            /* Chart header wrap */
-            .chart-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-                padding: 10px;
-            }
-            
-            .chart-left {
-                flex-wrap: wrap;
-                width: 100%;
-            }
-            
-            .symbol-info h3 {
-                font-size: 16px;
-            }
-            
-            .symbol-price {
-                font-size: 16px;
-            }
-            
-            /* Timeframes horizontal scroll */
-            .timeframes {
-                display: flex;
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                gap: 6px;
-                padding: 4px 0;
-                -webkit-overflow-scrolling: touch;
-            }
-            
-            .timeframe-btn {
-                flex-shrink: 0;
-                padding: 5px 12px;
-                font-size: 11px;
-            }
-            
-            /* Indicators full width */
-            .indicators-container {
-                width: 100%;
-                margin-top: 8px;
-            }
-            
-            .indicators-btn {
-                width: 100%;
-                justify-content: center;
-                padding: 8px;
-            }
-            
-            /* Panels slide from sides */
-            .left-panel, .right-panel {
-                position: fixed;
-                top: 0;
-                bottom: 0;
-                z-index: 200;
-                width: 85%;
-                max-width: 300px;
-                overflow-y: auto;
-                transition: transform 0.3s ease;
-                background: white;
-                box-shadow: 0 0 20px rgba(0,0,0,0.2);
-            }
-            
-            .left-panel {
-                left: 0;
-                transform: translateX(-100%);
-            }
-            
-            .left-panel.collapsed {
-                transform: translateX(-100%);
-            }
-            
-            .left-panel:not(.collapsed) {
-                transform: translateX(0);
-            }
-            
-            .right-panel {
-                right: 0;
-                transform: translateX(100%);
-            }
-            
-            .right-panel.collapsed {
-                transform: translateX(100%);
-            }
-            
-            .right-panel:not(.collapsed) {
-                transform: translateX(0);
-            }
-            
-            /* Floating toggle buttons */
-            .toggle-bar {
-                position: fixed;
-                bottom: 16px;
-                left: 50%;
-                transform: translateX(-50%);
-                flex-direction: row;
-                justify-content: center;
-                gap: 12px;
-                background: rgba(255,255,255,0.95);
-                backdrop-filter: blur(10px);
-                padding: 8px 20px;
-                border-radius: 40px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-                z-index: 100;
-                width: auto;
-                border: 1px solid #e5e7eb;
-            }
-            
-            .toggle-left, .toggle-right {
-                justify-content: center;
-            }
-            
-            .toggle-btn {
-                padding: 8px 16px;
-                font-size: 13px;
-            }
-            
-            /* Account badge smaller */
-            .account-mode-badge {
-                padding: 3px 8px;
-                gap: 6px;
-            }
-            
-            .mode-badge {
-                padding: 3px 10px;
-                font-size: 10px;
-            }
-            
-            .reset-demo-btn {
-                padding: 3px 10px;
-                font-size: 9px;
-            }
-            
-            /* Order panel stacked */
-            .order-row {
-                flex-direction: column;
-                gap: 0;
-            }
-            
-            .order-tabs {
-                gap: 8px;
-            }
-            
-            .order-tab {
-                padding: 10px;
-                font-size: 13px;
-            }
-            
-            /* Watchlist details wrap */
-            .watchlist-item-details {
-                flex-wrap: wrap;
-                gap: 8px;
-                margin-left: 0;
-            }
-            
-            .watchlist-symbol {
-                font-size: 14px;
-            }
-            
-            .watchlist-price {
-                font-size: 13px;
-            }
-            
-            /* Positions table horizontal scroll */
-            .positions-table-wrapper {
-                overflow-x: auto;
-            }
-            
-            .positions-table {
-                min-width: 500px;
-            }
-            
-            /* Overlay visible when panel open */
-            .overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0,0,0,0.5);
-                z-index: 150;
-                display: none;
-            }
-            
-            .overlay.active {
-                display: block;
-            }
-            
-            /* Chart drag touch friendly */
-            .chart-drag-container {
-                cursor: grab;
-            }
-            
-            .chart-drag-container:active {
-                cursor: grabbing;
-            }
+            body { overflow-y: auto; height: auto; }
+            .dashboard { flex-direction: column; height: auto; overflow: visible; }
+            .left-toolbar, .right-toolbar { display: none; }
+            .center-panel { width: 100%; overflow: visible; }
+            .chart-main-area { padding: 0 8px 8px 8px; }
+            .chart-wrapper { min-height: 350px; }
+            .chart-watermark { font-size: 28px; letter-spacing: 4px; }
+            .chart-header { flex-direction: column; align-items: flex-start; gap: 8px; padding: 10px; }
+            .chart-left { flex-wrap: wrap; width: 100%; }
+            .symbol-info h3 { font-size: 16px; }
+            .symbol-price { font-size: 16px; }
+            .timeframes { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding: 4px 0; -webkit-overflow-scrolling: touch; }
+            .timeframe-btn { flex-shrink: 0; padding: 5px 12px; font-size: 11px; }
+            .indicators-container { width: 100%; margin-top: 8px; }
+            .indicators-btn { width: 100%; justify-content: center; padding: 8px; }
+            .left-panel, .right-panel { position: fixed; top: 0; bottom: 0; z-index: 200; width: 85%; max-width: 300px; overflow-y: auto; transition: transform 0.3s ease; background: white; box-shadow: 0 0 20px rgba(0,0,0,0.2); }
+            .left-panel { left: 0; transform: translateX(-100%); }
+            .left-panel.collapsed { transform: translateX(-100%); }
+            .left-panel:not(.collapsed) { transform: translateX(0); }
+            .right-panel { right: 0; transform: translateX(100%); }
+            .right-panel.collapsed { transform: translateX(100%); }
+            .right-panel:not(.collapsed) { transform: translateX(0); }
+            .toggle-bar { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); flex-direction: row; justify-content: center; gap: 12px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 8px 20px; border-radius: 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); z-index: 100; width: auto; border: 1px solid #e5e7eb; }
+            .toggle-left, .toggle-right { justify-content: center; }
+            .toggle-btn { padding: 8px 16px; font-size: 13px; }
+            .account-mode-badge { padding: 3px 8px; gap: 6px; }
+            .mode-badge { padding: 3px 10px; font-size: 10px; }
+            .reset-demo-btn { padding: 3px 10px; font-size: 9px; }
+            .order-row { flex-direction: column; gap: 0; }
+            .order-tabs { gap: 8px; }
+            .order-tab { padding: 10px; font-size: 13px; }
+            .watchlist-item-details { flex-wrap: wrap; gap: 8px; margin-left: 0; }
+            .watchlist-symbol { font-size: 14px; }
+            .watchlist-price { font-size: 13px; }
+            .positions-table-wrapper { overflow-x: auto; }
+            .positions-table { min-width: 500px; }
+            .overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 150; display: none; }
+            .overlay.active { display: block; }
+            .chart-drag-container { cursor: grab; }
+            .chart-drag-container:active { cursor: grabbing; }
         }
     </style>
 </head>
@@ -1211,7 +1018,7 @@
 
     <script>
         // ============================================================
-        // FORTISFX - INSTANT DEMO/REAL SWITCHING
+        // FORTISFX - COMPLETE TRADING DASHBOARD
         // ============================================================
         
         // Account balances
@@ -1569,15 +1376,17 @@
                 const isGold = p.symbol === 'XAU/USD';
                 const currentDisplay = isGold ? p.current.toFixed(2) : p.current.toFixed(5);
                 const entryDisplay = isGold ? p.entry.toFixed(2) : p.entry.toFixed(5);
-                return `<tr>
-                    <td>${p.symbol}</td>
-                    <td style="color:${p.type === 'buy' ? '#00c853' : '#ef4444'}; font-weight:600;">${p.type.toUpperCase()}</td>
-                    <td>${p.lotSize.toFixed(2)}</td>
-                    <td>${entryDisplay}</td>
-                    <td>${currentDisplay}</td>
-                    <td style="color:${p.pnl >= 0 ? '#00c853' : '#ef4444'}; font-weight:600;">${p.pnl >= 0 ? '+' : ''}$${p.pnl.toFixed(2)}</td>
-                    <td><button class="close-position" data-idx="${i}">Close</button></td>
-                </tr>`;
+                return `
+                    <tr>
+                        <td>${p.symbol}</td>
+                        <td style="color:${p.type === 'buy' ? '#00c853' : '#ef4444'}; font-weight:600;">${p.type.toUpperCase()}</td>
+                        <td>${p.lotSize.toFixed(2)}</td>
+                        <td>${entryDisplay}</td>
+                        <td>${currentDisplay}</td>
+                        <td style="color:${p.pnl >= 0 ? '#00c853' : '#ef4444'}; font-weight:600;">${p.pnl >= 0 ? '+' : ''}$${p.pnl.toFixed(2)}</td>
+                        <td><button class="close-position" data-idx="${i}">Close</button></td>
+                    </tr>
+                `;
             }).join('');
             document.querySelectorAll('.close-position').forEach(btn => { 
                 btn.addEventListener('click', (e) => { 
@@ -1636,9 +1445,6 @@
             alert(`✅ ${currentOrderType.toUpperCase()} order executed on ${activeAccount.toUpperCase()} account!\n${symbol}\nLot Size: ${lotSize}\nMargin Used: $${marginRequired.toFixed(2)}`);
         }
         
-        // ============================================================
-        // INSTANT ACCOUNT SWITCHING
-        // ============================================================
         function switchToDemo() {
             activeAccount = 'demo';
             document.getElementById('demoModeBtn').classList.add('active');
@@ -1648,6 +1454,10 @@
         }
         
         function switchToReal() {
+            if (realBalance <= 0) {
+                alert('❌ No funds. Please deposit first.');
+                return;
+            }
             activeAccount = 'real';
             document.getElementById('realModeBtn').classList.add('active');
             document.getElementById('demoModeBtn').classList.remove('active');
